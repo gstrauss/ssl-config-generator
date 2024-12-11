@@ -147,6 +147,7 @@ function form_config_init() {
             e.checked = mappings[entry[1]] === undefined ? !!entry[1] : mappings[entry[1]];
             break;
           case 'text':
+          case 'hidden':
             e.value = xmlEntities(entry[1]);
         }
 

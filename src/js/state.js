@@ -1,12 +1,24 @@
 import configs from './configs.js';
-import sstls from '../static/guidelines/latest.json';
 import minver from './helpers/minver.js';
 
+// import all the guidelines (except 4.0)
+const guidelinevers = [
+  '5.0','5.1','5.2','5.3','5.4','5.5','5.6','5.7'
+];
+const guidelines = {};
+for (let x of guidelinevers) {
+  guidelines[x] = require("../static/guidelines/"+x+".json");
+}
 
 export default async function () {
   const form = document.getElementById('form-generator').elements;
   const config = form['config'].value;
   const server = form['server'].value;
+  const guideln= form['guideline'].value !== ''
+               ? form['guideline'].value
+               : guidelinevers[guidelinevers.length-1];
+  // sstls.version for '5.0' is rendered as number 5, not string '5.0'
+  const sstls = guidelines[guideln];
   const ssc = sstls.configurations[form['config'].value];  // server side tls config for that level
   const supportsOcspStapling =
     configs[server].supportsOcspStapling
@@ -20,7 +32,7 @@ export default async function () {
   fragment += configs[server].usesOpenssl !== false ? `&openssl=${form['openssl'].value}` : '';
   fragment += configs[server].supportsHsts !== false && !form['hsts'].checked ? `&hsts=false` : '';
   fragment += supportsOcspStapling && !form['ocsp'].checked ? `&ocsp=false` : '';
-  fragment += `&guideline=${sstls.version}`;
+  fragment += `&guideline=${guideln}`;
 
   // generate the version tags
   let version_tags = `${configs[server].name} ${form['version'].value}`;
@@ -38,7 +50,7 @@ export default async function () {
 
   // generate the header
   const date = new Date().toISOString().substr(0, 10);
-  let header = `generated ${date}, Mozilla Guideline v${sstls.version}, ${version_tags}`;
+  let header = `generated ${date}, Mozilla Guideline v${guideln}, ${version_tags}`;
   header += configs[server].supportsHsts !== false && !form['hsts'].checked ? `, no HSTS` : '';
   header += supportsOcspStapling && !form['ocsp'].checked ? `, no OCSP` : '';
 
@@ -50,6 +62,15 @@ export default async function () {
       || !minver(configs[server].tls13, form['version'].value)
       || !minver(configs['openssl'].tls13, form['openssl'].value)) {
     protocols = protocols.filter(ciphers => ciphers !== 'TLSv1.3');
+  }
+
+  // re-map keys from older guideline 5.0
+  if (guideln === '5.0') {
+    ssc.ciphersuites = ssc.openssl_ciphersuites;
+    ssc.ciphers = { // copy iana from 5.1 guideline
+      iana: guidelines['5.1'].configurations[form['config'].value].ciphers.iana,
+      openssl: ssc.openssl_ciphers
+    };
   }
 
   let ciphers = configs[server].cipherFormat ? ssc.ciphers[configs[server].cipherFormat] : ssc.ciphers.openssl;
