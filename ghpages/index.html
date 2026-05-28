@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" class="bg-black">
 <head>
-    <!--
-      Read more about our custom configuration and use of Google Analytics here:
-      https://bugzilla.mozilla.org/show_bug.cgi?id=1122305#c8
-    -->
-    <% if (htmlWebpackPlugin.options.production) { %>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRW9P16BD8"></script>
-    <script src="/analytics.js"></script>
-    <% } %>
-
     <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="<%= htmlWebpackPlugin.options.csp %>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; connect-src 'self' https://www.google-analytics.com; font-src 'self' https://code.cdn.mozilla.net; img-src 'self' https://www.google-analytics.com; script-src 'self' https://www.google-analytics.com/analytics.js https://www.googletagmanager.com/gtag/js; style-src 'self' https://code.cdn.mozilla.net">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="<%= htmlWebpackPlugin.options.constants.author %>">
-    <meta name="description" content="<%= htmlWebpackPlugin.options.constants.description %>">
-    <meta property="og:title" content="<%= htmlWebpackPlugin.options.constants.title %>">
+    <meta name="author" content="April King">
+    <meta name="description" content="An easy-to-use secure configuration generator for web, database, and mail software. Simply select the software you are using and receive a configuration file that is both safe and compatible.">
+    <meta property="og:title" content="Mozilla SSL Configuration Generator">
     <meta http-equiv="refresh" content="3; url=https://configurator.tlsref.org/">
+    <link rel="stylesheet" href="/css/index.scss">
 
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>Mozilla SSL Configuration Generator</title>
 </head>
 <body>
   <div class="container pt-4">
     <div class="h2 pb-2">
       <span class="bg-black text-white px-3">moz://a</span>
-      <span class="d-none d-md-inline-block"><%= htmlWebpackPlugin.options.constants.header %></span>
-      <span class="d-inline-block d-md-none"><%= htmlWebpackPlugin.options.constants.mobileHeader %></span>
+      <span class="d-none d-md-inline-block">SSL Configuration Generator</span>
+      <span class="d-inline-block d-md-none">SSL Config Generator</span>
     </div>
     <div id="output-header">
       <div class="h5">Mozilla SSL Config Generator has moved to <a href="https://configurator.tlsref.org/">TLSRef Configurator</a></div>
@@ -72,9 +64,6 @@
       </div>
 
     </div>
-    <% if (htmlWebpackPlugin.options.production) { %>
-    <div class="w-100 d-none d-md-block pr-3 pb-1 small text-right text-muted"><a class="text-secondary" href="https://github.com/mozilla/ssl-config-generator/commit/<%= htmlWebpackPlugin.options.revision %>">build <%= htmlWebpackPlugin.options.revision %></a>, generated <%= htmlWebpackPlugin.options.date %></div>
-    <% } %>
   </footer>
 </body>
 </html>
